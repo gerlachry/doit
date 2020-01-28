@@ -1,4 +1,4 @@
-module stash.merck.com/gerlachr/doit
+module github.com/gerlachry/doit
 
 go 1.13
 

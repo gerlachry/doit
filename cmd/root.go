@@ -53,7 +53,7 @@ func init() {
 func initConfig() {
 	if cfgFile != "" {
 		// Use config file from the flag.
-		fmt.Println("setting config file from flag")
+		//fmt.Println("setting config file from flag")
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Find home directory.
@@ -98,7 +98,6 @@ func initDB() {
 		}
 	}
 
-	fmt.Println("backend connection created")
 	db = d
 }
 
@@ -124,6 +123,5 @@ func initSchema(db *sql.DB) error {
 }
 
 func closeDB() {
-	fmt.Println("closing down the db")
 	db.Close()
 }

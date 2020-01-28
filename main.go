@@ -1,6 +1,6 @@
 package main
 
-import "stash.merck.com/gerlachr/doit/cmd"
+import "github.com/gerlachry/doit/cmd"
 
 func main() {
 	cmd.Execute()
