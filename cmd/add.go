@@ -10,31 +10,52 @@ import (
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Add a new todo task",
+	Use:       "add",
+	ValidArgs: []string{"name"},
+	Short:     "Add a new todo task",
 	Long: `Add a new todo task:
 
 Provide the task name and the priority
 Example:
-doit add --name="take the trash out" --priority=3	`,
+doit add "take the trash out" --priority=3 --project=house`,
 	Run: func(cmd *cobra.Command, args []string) {
-		name, err := cmd.Flags().GetString("name")
-		if err != nil {
-			fmt.Println("error parsing the name parameter: ", err)
-			os.Exit(1)
-		}
+		name := args[0]
 
 		priority, err := cmd.Flags().GetInt("priority")
 		if err != nil {
 			fmt.Println("error parsing the priority parameter", err)
 			os.Exit(1)
 		}
-		t := doit.Task{Name: name, Priority: priority, Completed: 0, DB: db}
 
-		err = t.Insert()
+		prj, err := cmd.Flags().GetString("project")
+		if err != nil {
+			fmt.Println("error parsing the project name", err)
+			os.Exit(1)
+		}
+
+		var p doit.Project
+		if prj != "" {
+			p, err = doit.Find(prj, db)
+			if err != nil {
+				os.Exit(1)
+			}
+			if p.ID == 0 {
+				err = p.Insert(db)
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
+			}
+		}
+
+		t := doit.Task{Name: name, Priority: priority, Completed: 0, Project: p}
+
+		err = t.Insert(db)
 		if err != nil {
 			os.Exit(1)
 		}
+
+		fmt.Println("added task")
 	},
 }
 
@@ -50,6 +71,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	addCmd.Flags().String("name", "", "The task to do")
+	//addCmd.Flags().String("name", "", "The task to do")
 	addCmd.Flags().Int("priority", 3, "The priorit for the task, 1=High, 2=Medium, 3=Low")
+	addCmd.Flags().String("project", "", "Optional project to assign the task to")
 }

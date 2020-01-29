@@ -5,14 +5,6 @@ import (
 	"fmt"
 )
 
-// Project a project to hold releated tasks
-type Project struct {
-	ID       int
-	Name     string
-	Created  int
-	Modified int
-}
-
 // Task a single todo task
 type Task struct {
 	ID        int
@@ -22,19 +14,18 @@ type Task struct {
 	Project   Project
 	Created   int
 	Modified  int
-	DB        *sql.DB
 }
 
 // Insert insert a new task to the backend
-func (t Task) Insert() error {
-	tx, err := t.DB.Begin()
+func (t Task) Insert(db *sql.DB) error {
+	tx, err := db.Begin()
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
-	_, err = tx.Exec("insert into tasks (name, priority, completed) values (?,?,?)",
-		t.Name, t.Priority, t.Completed)
+	_, err = tx.Exec("insert into tasks (name, priority, completed, project_id) values (?,?,?,?)",
+		t.Name, t.Priority, t.Completed, t.Project.ID)
 	if err != nil {
 		fmt.Println(err)
 		return err
