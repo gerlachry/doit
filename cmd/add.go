@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	doit "github.com/gerlachry/doit/pkg"
+	"github.com/gerlachry/doit/todo"
 	"github.com/spf13/cobra"
 )
 
@@ -33,22 +33,8 @@ doit add "take the trash out" --priority=3 --project=house`,
 			os.Exit(1)
 		}
 
-		var p doit.Project
-		if prj != "" {
-			p, err = doit.Find(prj, db)
-			if err != nil {
-				os.Exit(1)
-			}
-			if p.ID == 0 {
-				err = p.Insert(db)
-				if err != nil {
-					fmt.Println(err)
-					os.Exit(1)
-				}
-			}
-		}
-
-		t := doit.Task{Name: name, Priority: priority, Completed: 0, Project: p}
+		p := todo.Project{Name: prj}
+		t := todo.Task{Name: name, Priority: priority, Completed: 0, Project: p}
 
 		err = t.Insert(db)
 		if err != nil {

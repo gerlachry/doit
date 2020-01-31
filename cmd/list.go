@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	doit "github.com/gerlachry/doit/pkg"
+	"github.com/gerlachry/doit/todo"
 	"github.com/spf13/cobra"
 )
 
@@ -24,13 +24,14 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		tasks, err := doit.List(db)
+		tasks, err := todo.List(db)
 		if err != nil {
 			panic(err)
 		}
 
 		for _, t := range tasks {
-			fmt.Printf("%d - (%s) %s\n", t.ID, priorityMap[t.Priority], t.Name)
+			// TODO: print with fixed width/spacing
+			fmt.Printf("%d - (%s) [%s] %s\n", t.ID, priorityMap[t.Priority], t.Project.Name, t.Name)
 		}
 	},
 }

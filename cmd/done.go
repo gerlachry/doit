@@ -5,8 +5,8 @@ import (
 	"os"
 	"strconv"
 
-	doit "github.com/gerlachry/doit/pkg"
 	"github.com/spf13/cobra"
+	"github.com/gerlachry/doit/todo"
 )
 
 // doneCmd represents the done command
@@ -33,7 +33,7 @@ to quickly create a Cobra application.`,
 		// 	fmt.Println("could not get the id parameter", err)
 		// 	os.Exit(1)
 		// }
-		err = doit.Done(i, db)
+		err = todo.Done(i, db)
 		if err != nil {
 			panic(err)
 		}
