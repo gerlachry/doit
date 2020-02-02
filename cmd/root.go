@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 
+	"github.com/gerlachry/doit/todo"
 	_ "github.com/mattn/go-sqlite3"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -46,7 +47,7 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	viper.SetDefault("db", "./doit.db")
+	viper.SetDefault("db", "~/doit.db")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -102,25 +103,7 @@ func initDB() {
 }
 
 func initSchema(db *sql.DB) error {
-	sqlStmt := `
-	create table projects (
-		id integer not null primary key,
-		name text,
-		created text default current_timestamp,
-		modified text default current_timestamp
-	);
-
-    create table tasks (
-      id integer not null primary key,
-      name text,
-      priority integer not null,
-	  completed integer,
-	  project_id integer references project(id),
-      created text default current_timestamp,
-      modified text default current_timestamp
-    )
-  `
-	_, err := db.Exec(sqlStmt)
+	_, err := db.Exec(todo.InitDB)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

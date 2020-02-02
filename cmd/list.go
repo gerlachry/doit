@@ -16,13 +16,7 @@ var priorityMap = map[int]string{
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "List the current outstanding tasks",
 	Run: func(cmd *cobra.Command, args []string) {
 		tasks, err := todo.List(db)
 		if err != nil {
@@ -30,8 +24,7 @@ to quickly create a Cobra application.`,
 		}
 
 		for _, t := range tasks {
-			// TODO: print with fixed width/spacing
-			fmt.Printf("%d - (%s) [%s] %s\n", t.ID, priorityMap[t.Priority], t.Project.Name, t.Name)
+			fmt.Printf("%-3d(%s)[%-10s]%-50s\n", t.ID, priorityMap[t.Priority], t.Project.Name, t.Name)
 		}
 	},
 }
