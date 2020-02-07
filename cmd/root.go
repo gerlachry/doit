@@ -3,8 +3,10 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+	"path"
+
+	"github.com/spf13/cobra"
 
 	"github.com/gerlachry/doit/todo"
 	_ "github.com/mattn/go-sqlite3"
@@ -14,7 +16,6 @@ import (
 
 var cfgFile string
 var db *sql.DB
-var initDatabase bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -41,13 +42,10 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.doit.yaml)")
-	rootCmd.PersistentFlags().BoolVarP(&initDatabase, "initDatabase", "i", false, "init the database")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	viper.SetDefault("db", "~/doit.db")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -78,7 +76,30 @@ func initConfig() {
 }
 
 func initDB() {
-	d, err := sql.Open("sqlite3", viper.GetString("db"))
+	initDatabase := false
+	dbFile := viper.GetString("db")
+	if dbFile == "" {
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		dbFile = path.Join(home, ".doit.db")
+	}
+	_, err := os.Stat(dbFile)
+	if os.IsNotExist(err) {
+		fmt.Println("Creating database file")
+		_, err = os.Create(dbFile)
+		if err != nil {
+			fmt.Println("error creating db file")
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		fmt.Printf("created db file %s\n", viper.GetString("db"))
+		initDatabase = true
+	}
+
+	d, err := sql.Open("sqlite3", dbFile)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
