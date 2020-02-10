@@ -135,5 +135,7 @@ func initSchema(db *sql.DB) error {
 }
 
 func closeDB() {
-	db.Close()
+	if db != nil {
+		db.Close()
+	}
 }
