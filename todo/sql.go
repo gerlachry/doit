@@ -19,3 +19,21 @@ create table tasks (
   modified text default current_timestamp
 )
 `
+
+// TaskSelectSQL select sql for outstanding tasks
+const TaskSelectSQL string = `
+select 
+  t.id, 
+  t.name, 
+  priority,
+  coalesce(p.id,0) as project_id,
+  coalesce(p.name, "") as project_name
+from tasks t
+left outer join projects p on p.id = t.project_id
+where completed = 0 
+`
+
+// TaskSelectOrderBySQL order by clause for outstanding tasks
+const TaskSelectOrderBySQL string = `
+order by priority asc, t.created asc
+`

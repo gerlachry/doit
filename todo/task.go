@@ -79,13 +79,19 @@ func (t Task) Insert(db *sql.DB) error {
 }
 
 // List fetch and return open tasks from the backend
-func List(db *sql.DB) ([]Task, error) {
-	rows, err := db.Query(`
-	select t.id, t.name, priority, coalesce(p.id,0) as project_id, coalesce(p.name, "") as project_name
-	from tasks t
-	left outer join projects p on p.id = t.project_id
-	where completed = 0 
-	order by priority asc, t.created asc`)
+func List(db *sql.DB, project string) ([]Task, error) {
+	sqlSelect := TaskSelectSQL
+	var rows *sql.Rows
+	var err error
+	if project != "" {
+		sqlSelect += " and p.name = $1"
+		sqlSelect += TaskSelectOrderBySQL
+		rows, err = db.Query(sqlSelect, project)
+	} else {
+
+		sqlSelect += TaskSelectOrderBySQL
+		rows, err = db.Query(sqlSelect, project)
+	}
 	if err != nil {
 		fmt.Println(err)
 		return []Task{}, err

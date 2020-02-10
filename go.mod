@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
