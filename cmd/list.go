@@ -35,6 +35,7 @@ var listCmd = &cobra.Command{
 			fmt.Printf("no open tasks for project %s\n", prj)
 		}
 		table := tablewriter.NewWriter(os.Stdout)
+		table.SetAutoWrapText(false)
 		table.SetHeader([]string{"ID", "Priority", "Project", "Task"})
 		for _, t := range tasks {
 			table.Append([]string{strconv.Itoa(t.ID), priorityMap[t.Priority], t.Project.Name, t.Name})

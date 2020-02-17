@@ -48,3 +48,17 @@ doit list --project=home
 |  3 | L        | home    | take out the trash |
 +----+----------+---------+--------------------+
 ```
+
+## Build
+- original development done on Linux
+- linux
+```
+go build -o doit_goos_goarch_version
+```
+- darwin
+    - uses Docker which contains proper cross compiler tools as go-sqlite uses cgo
+    - makes use of (crossbuild)[https://github.com/multiarch/crossbuild] for base image to handle compilers
+```
+docker build -t doit_builder -f Dockerfile .
+docker run -it --rm -v $(pwd):/workdir -e CROSS_TRIPLE=x86_64-apple-darwin  multiarch/crossbuild sh -c "CGO_EANBLED=1 GOOS=darwin GOARCH=amd64 go build -o doit_darwin_64_0.1-alpha"
+```
